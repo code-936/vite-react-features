@@ -1,0 +1,81 @@
+import { useState } from 'react';
+import { useApiMutation } from '../services/apiServices';
+
+const Login = () => {
+    const [ username, setUsername ] = useState("");
+    const [ password, setPassword ] = useState("");
+
+    // Using the API mutation hook
+    const { mutate, isPending, isError, isSuccess, data, error } = useApiMutation(
+        // 'https://dummyjson.com/auth/login',
+        'http://localhost:8000/auth/login',
+        'POST'
+    );
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log('handleSubmit called');
+        
+        // Call the API mutation
+        mutate(
+            { username, password },
+            {
+                onSuccess: (response) => {
+                    console.log('Login successful:', response);
+                    if (response.data) {
+                        // Store user data in localStorage
+                        console.log('response', response);
+                        const userData = {
+                            isAuthenticated: true,
+                            username: response.data.user.username || username,
+                            token: response.data.user.token,
+                            ...response.data.user
+                        };
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        console.log('User data stored in localStorage:', localStorage.getItem('user'));
+                    }
+                },
+                onError: (err) => {
+                    console.error('Login failed:', err);
+                }
+            }
+        );
+    }
+
+    return (
+        <div>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor='username'>Username</label>
+                    <input 
+                        id='username' 
+                        type='text' 
+                        placeholder='Enter your username' 
+                        value={username}
+                        onChange={e => setUsername(e.target.value)} 
+                    />
+                </div>
+                <div>
+                    <label htmlFor='password'>Password</label>
+                    <input 
+                        id='password' 
+                        type='password' 
+                        placeholder='Enter your password' 
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}  
+                    />
+                </div>
+                <button type="submit" disabled={isPending}>
+                    {isPending ? 'Logging in...' : 'Submit'}
+                </button>
+                
+                {isError && <div style={{color: 'red', marginTop: '10px'}}>Error: {error?.message || 'Login failed'}</div>}
+                {isSuccess && data?.error && <div style={{color: 'red', marginTop: '10px'}}>Error: {data.error}</div>}
+                {isSuccess && data?.data && <div style={{color: 'green', marginTop: '10px'}}>Login successful!</div>}
+            </form>
+        </div>
+    )
+
+}
+
+export default Login;
