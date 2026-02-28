@@ -20,7 +20,7 @@ export const apiService = async ({ url, method = 'GET', body = null }) => {
   }
 
   const response = await fetch(url, options);
-  
+
   const data = await response.json();
 
   if (!response.ok) {
@@ -56,7 +56,7 @@ export const useApiMutation = (url, method = 'POST') => {
 export const loginUser = async (username, password) => {
   // For demo purposes, using a mock API or replace with your actual API endpoint
   const url = 'http://localhost:3002/auth/login';
-  
+
   return apiService({
     url,
     method: 'POST',
