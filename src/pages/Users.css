@@ -2,6 +2,7 @@
   padding: 24px;
   max-width: 900px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .users-container h2 {
@@ -15,6 +16,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow-x: auto;
 }
 
 .users-table-head {
@@ -26,6 +28,7 @@
   font-weight: 700 !important;
   font-size: 0.9rem !important;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .users-table-row:nth-of-type(even) {
@@ -40,4 +43,75 @@
 .users-table-row td {
   font-size: 0.875rem;
   color: #333;
+}
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .users-container {
+    padding: 16px;
+  }
+
+  .users-container h2 {
+    font-size: 1.25rem;
+  }
+
+  .users-table-head th {
+    font-size: 0.8rem !important;
+    padding: 10px 8px !important;
+  }
+
+  .users-table-row td {
+    font-size: 0.8rem;
+    padding: 10px 8px !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .users-container {
+    padding: 12px 8px;
+  }
+
+  .users-container h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .users-table-wrapper {
+    border-radius: 4px;
+  }
+
+  .users-table-head th {
+    font-size: 0.75rem !important;
+    padding: 8px 6px !important;
+    letter-spacing: 0;
+  }
+
+  .users-table-row td {
+    font-size: 0.75rem;
+    padding: 8px 6px !important;
+    word-break: break-word;
+  }
+}
+
+/* Large screens (1200px and above) */
+@media (min-width: 1200px) {
+  .users-container {
+    max-width: 1100px;
+    padding: 32px;
+  }
+
+  .users-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .users-table-head th {
+    font-size: 1rem !important;
+    padding: 16px !important;
+  }
+
+  .users-table-row td {
+    font-size: 0.95rem;
+    padding: 14px 16px !important;
+  }
 }
