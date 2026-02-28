@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 /**
  * Generic API service function
@@ -7,7 +7,12 @@ import { useMutation } from '@tanstack/react-query';
  * @param {object} body - Request body data
  * @returns {Promise} - Promise with response data
  */
-export const apiService = async ({ url, method = 'GET', body = null }) => {
+export const apiService = async ({ url, method = 'GET', body = null, params = null }) => {
+  if (params) {
+    const queryString = new URLSearchParams(params).toString();
+    url = `${url}?${queryString}`;
+  }
+
   const options = {
     method,
     headers: {
@@ -43,7 +48,22 @@ export const apiService = async ({ url, method = 'GET', body = null }) => {
  */
 export const useApiMutation = (url, method = 'POST') => {
   return useMutation({
-    mutationFn: (body) => apiService({ url, method, body }),
+    mutationFn: (body, params = {}) => apiService({ url, method, body, params }),
+  });
+};
+
+/**
+ * Custom hook for API queries (GET requests)
+ * @param {string} url - API endpoint URL
+ * @param {object} params - Query string parameters
+ * @param {object} options - Additional react-query options
+ * @returns {object} - Query object with data, isLoading, error, etc.
+ */
+export const useApiQuery = (url, params = null, options = {}) => {
+  return useQuery({
+    queryKey: [url, params],
+    queryFn: () => apiService({ url, method: 'GET', params }),
+    ...options,
   });
 };
 

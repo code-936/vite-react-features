@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from './pages/Login.jsx';
 import Layout from './layouts/Layout.jsx';
 import Home from './pages/Home.jsx';
+import Users from './pages/Users.jsx';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ function App() {
               <Route path="/Login" element={<Login />} />
               <Route path="/home" element={<Home />} />
               <Route path="/home/:userName" element={<Home />} />
+              <Route path="/users" element={<Users />} />
             </Routes>
           </Layout>
         </BrowserRouter>

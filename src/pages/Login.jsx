@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -7,6 +8,7 @@ import { useApiMutation } from '../services/apiServices';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   // Using the API mutation hook
   const { mutate, isPending, isError, isSuccess, data, error } = useApiMutation(
@@ -36,6 +38,7 @@ const Login = () => {
             };
             localStorage.setItem('user', JSON.stringify(userData));
             console.log('User data stored in localStorage:', localStorage.getItem('user'));
+            navigate('/users');
           }
         },
         onError: (err) => {

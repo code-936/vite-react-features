@@ -1,0 +1,43 @@
+.users-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.users-container h2 {
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.users-table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.users-table-head {
+  background-color: #1976d2;
+}
+
+.users-table-head th {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.05em;
+}
+
+.users-table-row:nth-of-type(even) {
+  background-color: #f5f8ff;
+}
+
+.users-table-row:hover {
+  background-color: #e3f0ff;
+  transition: background-color 0.2s ease;
+}
+
+.users-table-row td {
+  font-size: 0.875rem;
+  color: #333;
+}
