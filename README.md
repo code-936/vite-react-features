@@ -64,3 +64,31 @@ Tablet ≤ 768px Moderate padding/font reduction
 Default Original styles (900px max-width)
 Large ≥ 1200px Expanded max-width to 1100px, larger fonts and cell padding
 Also added overflow-x: auto on .users-table-wrapper so the table scrolls horizontally on narrow screens instead of breaking layout.
+
+## Installed axios and implemented the hook in hooks/useApiAxios.js. Here's a summary of what's included:
+
+Axios instance & interceptors
+
+Request interceptor — automatically attaches Authorization: Bearer <token> from localStorage if present
+Response interceptor — handles 401s globally and distinguishes cancelled requests from real errors
+useApiAxios hook
+
+Accepts { url, method, params, body, immediate }
+Returns { isPending, isSuccess, isError, error, data, execute }
+Uses AbortController to cancel in-flight requests on unmount or when execute is called again before the previous one finishes
+Usage examples:
+
+// Auto-fetch on mount (GET)
+const { isPending, isError, data } = useApiAxios({
+url: 'http://localhost:8000/users',
+params: { role: 'admin' },
+});
+
+// Manual trigger (POST)
+const { isPending, execute } = useApiAxios({
+url: 'http://localhost:8000/auth/login',
+method: 'POST',
+immediate: false,
+});
+
+const handleSubmit = () => execute({ username, password });
