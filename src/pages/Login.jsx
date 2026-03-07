@@ -4,32 +4,63 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useApiMutation } from '../services/apiServices';
+import useApiAxios from '../hooks/useApiAxios';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Using the API mutation hook
-  const { mutate, isPending, isError, isSuccess, data, error } = useApiMutation(
-    // 'https://dummyjson.com/auth/login',
-    'http://localhost:8000/auth/login',
-    'POST'
-  );
+  // Using the API mutation hook - Tanstack Query
+  // const { mutate, isPending, isError, isSuccess, data, error } = useApiMutation(
+  //   // 'https://dummyjson.com/auth/login',
+  //   'http://localhost:3001/auth/login',
+  //   'POST'
+  // );
+
+  // Using the API mutation hook - Axios
+  const { mutate, isPending, isError, isSuccess, data, error } = useApiAxios({
+    // url: 'https://dummyjson.com/auth/login',
+    url: 'http://localhost:3001/auth/login',
+    method: 'POST',
+    immediate: false,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('handleSubmit called');
 
     // Call the API mutation
-    mutate(
+    // mutate(
+    //   { username, password },
+    //   {
+    //     onSuccess: (response) => {
+    //       console.log('Login successful:', response);
+    //       if (response.data) {
+    //         // Store user data in localStorage
+    //         console.log('response', response);
+    //         const userData = {
+    //           isAuthenticated: true,
+    //           username: response.data.user.username || username,
+    //           token: response.data.user.token,
+    //           ...response.data.user,
+    //         };
+    //         localStorage.setItem('user', JSON.stringify(userData));
+    //         console.log('User data stored in localStorage:', localStorage.getItem('user'));
+    //         navigate('/users');
+    //       }
+    //     },
+    //     onError: (err) => {
+    //       console.error('Login failed:', err);
+    //     },
+    //   }
+    // );
+    await mutate(
       { username, password },
       {
         onSuccess: (response) => {
           console.log('Login successful:', response);
           if (response.data) {
-            // Store user data in localStorage
-            console.log('response', response);
             const userData = {
               isAuthenticated: true,
               username: response.data.user.username || username,

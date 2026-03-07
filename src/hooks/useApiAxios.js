@@ -66,8 +66,9 @@ const useApiAxios = ({
   // Keep a ref to the AbortController so we can cancel on unmount or re-call
   const abortControllerRef = useRef(null);
 
-  const execute = useCallback(
-    async (overrideBody = null) => {
+  const mutate = useCallback(
+    async (overrideBody = null, options = {}) => {
+      const { onSuccess, onError, onSettled } = options;
       // Cancel any in-flight request before starting a new one
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -90,6 +91,9 @@ const useApiAxios = ({
 
         setData(response.data);
         setIsSuccess(true);
+        onSuccess?.(response);
+        onSettled?.(response, null);
+        return response;
       } catch (err) {
         if (axios.isCancel(err) || err.name === 'CanceledError') {
           // Request was cancelled – do not update state
@@ -97,6 +101,9 @@ const useApiAxios = ({
         }
         setIsError(true);
         setError(err.response?.data?.message || err.message || 'An error occurred');
+        onError?.(err);
+        onSettled?.(null, err);
+        throw err;
       } finally {
         setIsPending(false);
       }
@@ -107,7 +114,7 @@ const useApiAxios = ({
   // Fire immediately on mount (and when dependencies change) if requested
   useEffect(() => {
     if (immediate) {
-      execute();
+      mutate();
     }
 
     // Cancel the request when the component unmounts
@@ -116,9 +123,9 @@ const useApiAxios = ({
         abortControllerRef.current.abort();
       }
     };
-  }, [execute, immediate]);
+  }, [mutate, immediate]);
 
-  return { isPending, isSuccess, isError, error, data, execute };
+  return { mutate, isPending, isError, isSuccess, data, error };
 };
 
 export default useApiAxios;
