@@ -92,3 +92,15 @@ immediate: false,
 });
 
 const handleSubmit = () => execute({ username, password });
+
+## Created three files:
+
+1. Dockerfile — multi-stage build: node:20-alpine builds the app with npm run build, then nginx:stable-alpine serves the dist/ folder
+2. nginx.conf — SPA-aware config with try_files $uri /index.html so react-router-dom routes work on page refresh, plus gzip, static asset caching (1 year), and security headers
+3. .dockerignore — excludes node_modules, dist, .git etc. from the build context
+
+Build and run:
+docker build -t vite-react-features .
+docker run -p 8080:80 vite-react-features
+
+Then open http://localhost:8080.
