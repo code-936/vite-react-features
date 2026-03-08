@@ -46,7 +46,7 @@ const Users = () => {
   //   }, []);
   const [state, dispatch] = useReducer(usersReducer, initialState);
 
-  const { isPending, isError, data, error } = useApiQuery('http://localhost:8000/users', {
+  const { isPending, isError, data, error } = useApiQuery('http://localhost:3001/users', {
     role: 'admin',
   });
 
