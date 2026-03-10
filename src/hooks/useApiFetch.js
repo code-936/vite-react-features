@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
  * @param url
@@ -25,8 +25,8 @@ import { useState, useEffect, useRef } from 'react';
  * The AbortController provides a signal that you pass to the fetch API. When you call .abort(), the fetch promise is immediately rejected.
  */
 
-export const useApiFetch = (url, method = 'GET') => {
-  const [isPending, setIsPending] = useState(true);
+export const useApiFetch = (url, method = 'GET', immediate = false) => {
+  const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [data, setData] = useState(null);
@@ -34,43 +34,58 @@ export const useApiFetch = (url, method = 'GET') => {
 
   const abortControllerRef = useRef(null);
 
-  const fetchData = async (url, method) => {
-    setIsPending(true);
-    setIsSuccess(false);
-    setIsError(false);
-    try {
-      const res = await fetch(url, { signal: abortControllerRef.current.signal });
-      if (!res.ok) {
-        throw new Error('Something went wrong');
+  const fetchData = useCallback(
+    async (requestUrl = url, requestMethod = method) => {
+      // If fetchData is accidentally used directly as an event handler, ignore the event argument.
+      if (requestUrl && typeof requestUrl === 'object' && 'nativeEvent' in requestUrl) {
+        requestUrl = url;
+        requestMethod = method;
       }
-      const resData = await res.json();
-      setIsSuccess(true);
-      setData(resData);
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        console.log('Aborting the request..');
-      } else {
-        setIsError(true);
-        setError(err instanceof Error ? err.message : error || 'Something went wrong');
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
-    } finally {
-      setIsPending(false);
-    }
-  };
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setIsPending(true);
+      setIsSuccess(false);
+      setIsError(false);
+      setError(null);
+      try {
+        const res = await fetch(requestUrl, {
+          method: requestMethod,
+          signal: abortControllerRef.current.signal,
+        });
+        if (!res.ok) {
+          throw new Error('Something went wrong');
+        }
+        const resData = await res.json();
+        setIsSuccess(true);
+        setData(resData);
+      } catch (err) {
+        if (err?.name === 'AbortError') {
+          console.log('Aborting the request..');
+        } else {
+          setIsError(true);
+          setError(err instanceof Error ? err.message : 'Something went wrong');
+        }
+      } finally {
+        setIsPending(false);
+      }
+    },
+    [url, method]
+  );
 
   useEffect(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    if (immediate) {
+      fetchData();
     }
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    fetchData(url, 'GET');
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, []);
+  }, [fetchData, immediate]);
 
-  return { isPending, isSuccess, isError, data, error };
+  return { isPending, isSuccess, isError, data, error, fetchData };
 };

@@ -3,7 +3,7 @@ import { useApiFetch } from '../hooks/useApiFetch';
 
 const Home = () => {
   const usersURL = 'https://jsonplaceholder.typicode.com/users';
-  const { isPending, isSuccess, isError, data, error } = useApiFetch(usersURL, 'GET');
+  const { isPending, isSuccess, isError, data, error, fetchData } = useApiFetch(usersURL, 'GET');
   const { userName } = useParams();
 
   let content = null;
@@ -18,6 +18,9 @@ const Home = () => {
   return (
     <>
       <div>This is Home. {userName && `Welcome ${userName}`}</div>
+      <input type="button" onClick={() => fetchData()} value="Get Users Data" />
+      {/* event will be passed to fetchData by default if code is like - onClick={fetchData}. fetchData function will not work as first param is event instead of url */}
+      {/* solution: pass no args to fetchData like onClick={() => fetchData()}*/}
       {content}
     </>
   );
