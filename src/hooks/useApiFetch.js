@@ -1,58 +1,75 @@
+import { useState, useEffect, useRef } from 'react';
+
 /**
- * Custom Hook to accept API parameters to return state and response
  * @param url
  * @param method
- * @param params
- * @param body
  *
  * @returns {{ isPending, isSuccess, isError, data, error }}
  */
 
-import { useState, useEffect } from 'react';
+/**
+ * Why AbortController?
+ * AbortController is to cancel the request whenever applicable:
+ * 1. Avoid bugs and memory leaks
+ * Component is unmounted for any reason(User navigates to different page) before the request is complete.
+ * setState on unavailable component causes unexpected bugs and memory leaks.
+ * 2. Outdated data due to Race Conditions.
+ * App makes API requests to fetch data for each key press in the seach box (eg: 'Pavan')
+ * First API request after user types in 'Pav' - Request 1 (slow)
+ * Second API request after user types in compelte term 'Pavan' - Request 2 (Fast)
+ * Request 2 completes first and updates state with relevant results to the complete search term
+ * Request 1 completes after Request 2 to update the state with results for the partial search term 'Pav'
+ * End user will be provided with outdated data.
+ * 3. Handling Timeouts - You can manually cancel request after a specific duration to prevent application from hanging indefinitely.
+ * AbortController - Abort the request on component unmount using return function within useEffect.
+ * The AbortController provides a signal that you pass to the fetch API. When you call .abort(), the fetch promise is immediately rejected.
+ */
 
-export const useApiFetch = () => {
+export const useApiFetch = (url, method = 'GET') => {
   const [isPending, setIsPending] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const abortControllerRef = useRef(null);
+
+  const fetchData = async (url, method) => {
+    setIsPending(true);
+    setIsSuccess(false);
+    setIsError(false);
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
+      const res = await fetch(url, { signal: abortControllerRef.current.signal });
       if (!res.ok) {
         throw new Error('Something went wrong');
       }
-      const users = await res.json();
+      const resData = await res.json();
       setIsSuccess(true);
-      setData(users);
+      setData(resData);
     } catch (err) {
-      setIsError(true);
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      if (err.name === 'AbortError') {
+        console.log('Aborting the request..');
+      } else {
+        setIsError(true);
+        setError(err instanceof Error ? err.message : error || 'Something went wrong');
+      }
     } finally {
       setIsPending(false);
     }
   };
 
   useEffect(() => {
-    // await fetch('https://jsonplaceholder.typicode.com/users')
-    //   .then((res) => {
-    //     if (!res.ok) throw new Error('Something went wrong');
-    //     return res.json();
-    //   })
-    //   .then((resData) => {
-    //     setData(resData);
-    //     setIsPending(false);
-    //     setIsSuccess(true);
-    //   })
-    //   .catch((error) => {
-    //     setIsPending(false);
-    //     setIsError(true);
-    //     setError(error.message);
-    //   })
-    //   .finally(setIsPending(false));
-
-    fetchData();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    fetchData(url, 'GET');
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   return { isPending, isSuccess, isError, data, error };

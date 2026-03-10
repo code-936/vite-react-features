@@ -2,7 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useApiFetch } from '../hooks/useApiFetch';
 
 const Home = () => {
-  const { isPending, isSuccess, isError, data, error } = useApiFetch();
+  const usersURL = 'https://jsonplaceholder.typicode.com/users';
+  const { isPending, isSuccess, isError, data, error } = useApiFetch(usersURL, 'GET');
   const { userName } = useParams();
 
   let content = null;
