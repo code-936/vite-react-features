@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from './pages/Login.jsx';
 import Layout from './layouts/Layout.jsx';
@@ -13,9 +13,32 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          {/* <nav>
-          <Link to="/home">Home</Link>
-        </nav> */}
+          <nav className="app-nav" aria-label="Main navigation">
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                `app-nav__link${isActive ? ' app-nav__link--active' : ''}`
+              }
+            >
+              Login
+            </NavLink>
+            <NavLink
+              to="/home"
+              className={({ isActive }) =>
+                `app-nav__link${isActive ? ' app-nav__link--active' : ''}`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/users"
+              className={({ isActive }) =>
+                `app-nav__link${isActive ? ' app-nav__link--active' : ''}`
+              }
+            >
+              Search Users
+            </NavLink>
+          </nav>
 
           {/* *** Need to implement: 1. Nested Layouts with <Outlet /> 2. Use Data Loaders feature of React Router *** */}
 
