@@ -1,0 +1,84 @@
+.simple-counter {
+  max-width: 520px;
+  margin: 24px auto;
+  padding: 20px;
+  border: 1px solid #dce6f8;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff, #f7faff);
+  box-shadow: 0 12px 30px -22px rgba(27, 82, 175, 0.38);
+}
+
+.simple-counter__title {
+  margin: 0 0 14px;
+  font-size: 1.4rem;
+  color: #1e3770;
+}
+
+.counter-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.counter-control__button {
+  border: 1px solid #2b5fc6;
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: #2b5fc6;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition:
+    transform 140ms ease,
+    box-shadow 160ms ease,
+    opacity 140ms ease;
+}
+
+.counter-control__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px -10px rgba(43, 95, 198, 0.75);
+}
+
+.counter-control__button:active {
+  transform: translateY(0);
+}
+
+.counter-control__button--secondary {
+  border-color: #8ca3cc;
+  background: #eef3ff;
+  color: #29416d;
+}
+
+.counter-control__label {
+  min-width: 90px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #24385e;
+  padding: 7px 10px;
+  border: 1px solid #c7d5ee;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.counter-control__button:focus-visible,
+.counter-control__label:focus-visible {
+  outline: 3px solid #9ebdf3;
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .simple-counter {
+    margin: 14px;
+    padding: 16px;
+  }
+
+  .counter-control {
+    gap: 8px;
+  }
+
+  .counter-control__button,
+  .counter-control__label {
+    width: 100%;
+  }
+}
