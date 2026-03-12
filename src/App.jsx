@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx';
 import Layout from './layouts/Layout.jsx';
 import Home from './pages/Home.jsx';
 import Users from './pages/Users.jsx';
+import VirtualAssistant from './features/VirtualAssistant/components/VirtualAssistant.jsx';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -51,6 +52,8 @@ function App() {
               <Route path="/users" element={<Users />} />
             </Routes>
           </Layout>
+
+          <VirtualAssistant />
         </BrowserRouter>
       </QueryClientProvider>
     </>
