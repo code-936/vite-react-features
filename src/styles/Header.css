@@ -1,0 +1,31 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 24px -18px rgba(30, 69, 138, 0.4);
+}
+
+.header .app-nav {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.app-layout {
+  padding-top: 92px;
+}
+
+@media (max-width: 540px) {
+  .header {
+    padding: 8px 10px;
+  }
+
+  .app-layout {
+    padding-top: 86px;
+  }
+}
